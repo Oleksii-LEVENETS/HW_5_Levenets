@@ -6,9 +6,10 @@ Task_2
 """
 import uuid
 from unittest import TestCase
-from HW_5_Levenets.HW_5_Levenets.Task_1.script_1 import Admin, Moderator, Member
-from HW_5_Levenets.HW_5_Levenets.Task_1.script_2 import set_like_to_article, share_article, create_article, \
-     update_article, delete_article, delete_group, NoAccess
+
+from HW_5_Levenets.HW_5_Levenets.Task_1.script_1 import Admin, Member, Moderator
+from HW_5_Levenets.HW_5_Levenets.Task_1.script_2 import NoAccess, create_article, delete_article, delete_group, \
+     set_like_to_article, share_article, update_article
 
 
 class TestUsers(TestCase):

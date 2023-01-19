@@ -9,7 +9,7 @@ Admin – те ж що і Moderator + видаляти статтю і вида�
 Для реалізації розмежування ви можете дописувати функції, проте найкращим варіантом буде реалізувати перевірку
 на доступ через декоратори.
 """
-from HW_5_Levenets.HW_5_Levenets.Task_1.script_1 import Admin, Moderator, Member
+from HW_5_Levenets.HW_5_Levenets.Task_1.script_1 import Admin, Member, Moderator
 
 
 class NoAccess(Exception):
