@@ -7,8 +7,8 @@ Task_2
 import uuid
 from unittest import TestCase
 
-from HW_5_Levenets.HW_5_Levenets.Task_1.script_1 import Admin, Member, Moderator
-from HW_5_Levenets.HW_5_Levenets.Task_1.script_2 import NoAccess, create_article, delete_article, delete_group, \
+from Task_1.script_1 import Admin, Member, Moderator
+from Task_1.script_2 import NoAccess, create_article, delete_article, delete_group, \
      set_like_to_article, share_article, update_article
 
 
@@ -65,8 +65,8 @@ class TestUsers(TestCase):
         self.assertEqual(member_1.full_name, f"{self.change['name']} {self.change['surname']}")
 
     def test_access_member(self):
-        self.assertEqual(set_like_to_article(self.member_1, 1), None)
-        self.assertEqual(share_article(self.member_1, 1), None)
+        self.assertEqual(set_like_to_article(self.member_1, 1), True)
+        self.assertEqual(share_article(self.member_1, 1), True)
         with self.assertRaises(NoAccess):
             create_article(self.member_1, 1)
         with self.assertRaises(NoAccess):
@@ -104,10 +104,10 @@ class TestUsers(TestCase):
         self.assertEqual(moderator_1.full_name, f"{self.change['name']} {self.change['surname']}")
 
     def test_access_moderator(self):
-        self.assertEqual(set_like_to_article(self.moderator_1, 1), None)
-        self.assertEqual(share_article(self.moderator_1, 1), None)
-        self.assertEqual(create_article(self.moderator_1, 1), None)
-        self.assertEqual(update_article(self.moderator_1, 1), None)
+        self.assertEqual(set_like_to_article(self.moderator_1, 1), True)
+        self.assertEqual(share_article(self.moderator_1, 1), True)
+        self.assertEqual(create_article(self.moderator_1, 1), True)
+        self.assertEqual(update_article(self.moderator_1, 1), True)
         with self.assertRaises(NoAccess):
             delete_article(self.moderator_1, 1)
         with self.assertRaises(NoAccess):
@@ -142,17 +142,17 @@ class TestUsers(TestCase):
         self.assertEqual(admin_1.full_name, f"{self.change['name']} {self.change['surname']}")
 
     def test_access_admin(self):
-        self.assertEqual(set_like_to_article(self.admin_1, 1), None)
-        self.assertEqual(share_article(self.admin_1, 1), None)
-        self.assertEqual(create_article(self.admin_1, 1), None)
-        self.assertEqual(update_article(self.admin_1, 1), None)
-        self.assertEqual(delete_article(self.admin_1, 1), None)
+        self.assertEqual(set_like_to_article(self.admin_1, 1), True)
+        self.assertEqual(share_article(self.admin_1, 1), True)
+        self.assertEqual(create_article(self.admin_1, 1), True)
+        self.assertEqual(update_article(self.admin_1, 1), True)
+        self.assertEqual(delete_article(self.admin_1, 1), True)
         with self.assertRaises(NoAccess):  # admin_1.level = 1
             delete_group(self.admin_1, 1)
         self.admin_1.level = 2
         with self.assertRaises(NoAccess):  # admin_1.level = 2
             delete_group(self.admin_1, 1)
         self.admin_1.level = 3
-        self.assertEqual(delete_group(self.admin_1, 1), None)  # admin_1.level = 3
+        self.assertEqual(delete_group(self.admin_1, 1), True)  # admin_1.level = 3
         self.admin_1.level = 4
-        self.assertEqual(delete_group(self.admin_1, 1), None)  # admin_1.level = 4
+        self.assertEqual(delete_group(self.admin_1, 1), True)  # admin_1.level = 4

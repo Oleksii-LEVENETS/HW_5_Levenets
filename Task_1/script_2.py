@@ -8,64 +8,80 @@ Admin – те ж що і Moderator + видаляти статтю і вида�
 не менше ніж 3.
 Для реалізації розмежування ви можете дописувати функції, проте найкращим варіантом буде реалізувати перевірку
 на доступ через декоратори.
+
+1.2 Ваш декоратор не повертає результат виконання функції яку він декорує
+даний декоратор не добре реалізований, виходить що ви двічі реєструйєте його для функції,
+один раз коли призначаєте на функцію, другий раз в самому декораторі записуючи імя функції.
++ воно може не спрацювати як потрібно, якщо на функції будуть ще декоратори,
+тоді вам func.__name__ поверне імя іншого декоратора (якщо ви не перевизначите це імя, а в більшості випадків
+цього не роблять)
+подумайте над тим щоб цей декоратор змінити на декоратор в "3 рівні"
+це може виглядати таким чином
+@check_access(roles=[Member, Moderator])
+таким чином вам потрібно буде в середині перевірити чи юзер є екземпляром одного з класів заданих в roles
+також такий декоратор ви можете назначити на будь-яку функцію, змінюючи тільки перелік ролей кому доступна цю функція
+
 """
-from HW_5_Levenets.HW_5_Levenets.Task_1.script_1 import Admin, Member, Moderator
+from Task_1.script_1 import Admin, Member, Moderator
 
 
 class NoAccess(Exception):
     pass
 
 
-def decorator(func):
-    def wrap(user, *args, **kwargs):
-        member_list = ["set_like_to_article", "share_article"]
-        moderator_list = ["set_like_to_article", "share_article", 'create_article', 'update_article']
-        admin_list_1 = ["set_like_to_article", "share_article", 'create_article', 'update_article', 'delete_article']
-        if isinstance(user, (Admin, Moderator, Member)) and (func.__name__ in member_list):
-            func(user, *args, **kwargs)
-        elif isinstance(user, (Admin, Moderator)) and func.__name__ in moderator_list:
-            func(user, *args, **kwargs)
-        elif isinstance(user, Admin) and func.__name__ in admin_list_1:
-            func(user, *args, **kwargs)
-        elif isinstance(user, Admin) and user.level >= 3:
-            func(user, *args, **kwargs)
-            # return func(user, *args, **kwargs)
-        else:
-            raise NoAccess("NoAccess")
-    return wrap
+def check_access(roles):
+    def decor(func):
+        def wrap(user, *args):
+            if isinstance(user, roles):
+                return func(user, *args)
+            else:
+                raise NoAccess
+        return wrap
+    return decor
 
 
-@decorator
+def check_access_level(roles, level):
+    def decor(func):
+        def wrap(user, *args):
+            if isinstance(user, roles) and user.level >= level:
+                return func(user, *args)
+            else:
+                raise NoAccess
+        return wrap
+    return decor
+
+
+@check_access_level(roles=(Admin,), level=3)
 def delete_group(user, group_id):
     print("Group has been deleted")
     return True
 
 
-@decorator
+@check_access(roles=(Admin, ))
 def delete_article(user, article_id):
     print("Article has been deleted")
     return True
 
 
-@decorator
+@check_access(roles=(Admin, Moderator))
 def create_article(user, post_data):
     print("Article has been created")
     return True
 
 
-@decorator
+@check_access(roles=(Admin, Moderator))
 def update_article(user, update_data):
     print("Article has been updated")
     return True
 
 
-@decorator
+@check_access(roles=(Admin, Member, Moderator))
 def share_article(user, article_id):
     print("Article has been shared")
     return True
 
 
-@decorator
+@check_access(roles=(Admin, Member, Moderator))
 def set_like_to_article(user, post_data):
     print("Like has been set")
     return True
